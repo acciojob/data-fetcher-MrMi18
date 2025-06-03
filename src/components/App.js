@@ -4,30 +4,34 @@ import './../styles/App.css';
 const App = () => {
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const fetchData = async () => {
-    // console.log("fetching the data");
-    try {
-      const res = await fetch("https://dummyjson.com/products");
-      const data = await res.json();
-      setData(data.products);
-      setIsLoading(false);
-    } catch (err) {
-      console.log(err.message);
-    }
+  const fetchData = () => {
+    fetch("https://dummyjson.com/products")
+      .then(res => res.json()) // Convert response to JSON
+      .then(json => {
+        console.log("API Response:", json);
+        if (!json.products || json.products.length === 0) {
+          setError("No data found"); // Handle empty response
+        } else {
+          setData(json.products);
+          setIsLoading(false);
+        }
+      })
+      .catch(err => setError(err.message)); // Catch errors
   };
 
   useEffect(() => {
     fetchData();
   }, []);
-  // console.log(data);
+
   if (isLoading) return <pre>Loading...</pre>;
+  if (error) return <pre>{error}</pre>;
+  
   return (
-    data && (
-      <div>
-        <pre>{JSON.stringify(data, null, 2)}</pre>
-      </div>
-    )
+    <div>
+      <pre>{JSON.stringify(data, null, 2)}</pre>
+    </div>
   );
 };
 
