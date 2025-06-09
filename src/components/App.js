@@ -1,38 +1,35 @@
-import React, { useEffect, useState } from "react";
-import './../styles/App.css';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
-const App = () => {
-  const [data, setData] = useState();
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
-// console.log(data)
-  const fetchData = () => {
-    fetch("https://dummyjson.com/products")
-      .then(res => res.json()) // Convert response to JSON
-      .then(json => {
-        console.log("API Response:", json);
-        if (!json.products || json.products.length === 0) {
-          setError("No data found"); // Handle empty response
-        } else {
-          setData(json);
-          setIsLoading(false);
-        }
-      })
-      .catch(err => setError(err.message)); // Catch errors
-  };
+export default function App() {
+  const [isvissible, setIsvissible] = useState(true);
+  const [apidata, setApidata] = useState(null);
+  const [err , setErr] = useState("")
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  useEffect(()=>{ 
+    axios({
+      url: 'https://dummyjson.com/products/',
+      module : "Get",    
+    })
+    .then(response=>{
+      let res = JSON.stringify(response.data);
+      setIsvissible(false);
+      setApidata(res);
+      console.log("Fetched Data: ",res);
+    })
+    .catch(function (error) {
+        let err = JSON.stringify(error.message);
+        console.log(err);
+        setErr(err);
+    });
+  },[])
 
-  if (isLoading) return <pre>Loading...</pre>;
-  if (error) return <pre>{error}</pre>;
-  
-  return (
+ return (
     <div>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      { isvissible && <p>loading...</p>}
+      { err && <p>{err}</p>}            
+      { !isvissible && <h1>Data Fetched from API</h1>}
+      {apidata}     
     </div>
   );
 };
-
-export default App;
