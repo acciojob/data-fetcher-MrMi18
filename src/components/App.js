@@ -5,7 +5,7 @@ const App = () => {
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-
+// console.log(data)
   const fetchData = () => {
     fetch("https://dummyjson.com/products")
       .then(res => res.json()) // Convert response to JSON
@@ -14,7 +14,7 @@ const App = () => {
         if (!json.products || json.products.length === 0) {
           setError("No data found"); // Handle empty response
         } else {
-          setData(json.products);
+          setData(json);
           setIsLoading(false);
         }
       })
